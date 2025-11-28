@@ -39,6 +39,9 @@ module.exports = {
       tanggal_selesai: {
         type: Sequelize.DATE
       },
+      dokumentasiUrl: {
+        type: Sequelize.TEXT
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

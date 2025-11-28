@@ -23,7 +23,8 @@ module.exports = (sequelize, DataTypes) => {
     permasalahan: DataTypes.STRING,
     permohonan: DataTypes.STRING,
     substansi_masalah: DataTypes.STRING,
-    tanggal_selesai: DataTypes.DATE
+    tanggal_selesai: DataTypes.DATE,
+    dokumentasiUrl: DataTypes.TEXT
   }, {
     sequelize,
     modelName: 'Arsip',
