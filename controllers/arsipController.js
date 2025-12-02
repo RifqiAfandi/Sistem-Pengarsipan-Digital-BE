@@ -152,9 +152,85 @@ async function createArsip(req, res) {
     }
 }
 
+async function updateArsip(req, res) {
+    try {
+        const {id} = req.params;
+        const {tanggal_masuk ,kategori, identitas_pelapor, nomor_telepon, sarana_pengaduan, sarana_pengajuan, permasalahan, permohonan, substansi_masalah, tanggal_selesai} = req.body;
+
+        const arsip = await Arsip.findByPk(id);
+        if (!arsip) {
+            return res.status(404).json({
+                status: 'error',
+                message: 'Arsip not found',
+                isSuccess: false,
+                data: null
+            });
+        }
+        
+        let updateData = {
+            tanggal_masuk: tanggal_masuk,
+            kategori : kategori,
+            identitas_pelapor: identitas_pelapor,
+            nomor_telepon: nomor_telepon,
+            sarana_pengaduan: sarana_pengaduan,
+            sarana_pengajuan: sarana_pengajuan,
+            permasalahan: permasalahan,
+            permohonan: permohonan,
+            substansi_masalah: substansi_masalah,
+            tanggal_selesai: tanggal_selesai
+        }
+
+        if (req.file) {
+            const file = req.file;
+            const split = file.originalname.split('.');
+            const ext = split[split.length - 1];
+            
+            try {
+                const uploadImg = await imagekit.upload({
+                    file: file.buffer,
+                    fileName: `${split[0]}-${Date.now()}.${ext}`,
+                });
+                if (!uploadImg.url) {
+                    return res.status(500).json({
+                        status: 'error',
+                        message: 'Image upload failed',
+                        isSuccess: false,
+                        data: null
+                    });
+                }
+                updateData.dokumentasiUrl = uploadImg.url;
+            } catch (error) {
+                return res.status(500).json({
+                    status: 'error',
+                    message: 'Image upload error: ' + error.message,
+                    isSuccess: false,
+                    data: null
+                });
+            }
+        }
+
+        await arsip.update(updateData);
+        const updatedArsip = await Arsip.findByPk(id);
+        return res.status(200).json({
+            status: 'success',
+            message: 'Arsip updated successfully',
+            isSuccess: true,
+            data: updatedArsip
+        });
+    } catch (error) {
+        res.status(500).json({
+            status: 'error',
+            message: error.message,
+            isSuccess: false,
+            data: null
+        });
+    }
+}
+
 module.exports = {
     getAllArsips,
     getArsipById,
     getAllArsipsPagination,
-    createArsip
+    createArsip,
+    updateArsip
 };
