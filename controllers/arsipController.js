@@ -227,10 +227,40 @@ async function updateArsip(req, res) {
     }
 }
 
+async function deleteArsip(req, res) {
+    try {
+        const {id} = req.params;
+        const arsip = await Arsip.findByPk(id);
+        if (!arsip) {
+            return res.status(404).json({
+                status: 'error',
+                message: 'Arsip not found',
+                isSuccess: false,
+                data: null
+            });
+        }
+        await arsip.destroy();
+        return res.status(200).json({
+            status: 'success',
+            message: 'Arsip deleted successfully',
+            isSuccess: true,
+            data: null
+        });
+    } catch (error) {
+        res.status(500).json({
+            status: 'error',
+            message: error.message,
+            isSuccess: false,
+            data: null
+        });
+    }
+}
+
 module.exports = {
     getAllArsips,
     getArsipById,
     getAllArsipsPagination,
     createArsip,
-    updateArsip
+    updateArsip,
+    deleteArsip
 };
