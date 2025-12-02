@@ -2,7 +2,7 @@ const {Users} = require('../models');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY 
+const JWT_SECRET = process.env.JWT_SECRET
 
 async function login(req, res) {
     try {
@@ -31,7 +31,7 @@ async function login(req, res) {
             {
                 id: user.id,
                 username: user.username
-            }, JWT_SECRET_KEY, {expiresIn: '24h'});
+            }, JWT_SECRET, {expiresIn: '24h'});
 
         return res.status(200).json({
             status: 'success',
@@ -45,6 +45,28 @@ async function login(req, res) {
                     username: user.username
                 }
             }
+        });
+    } catch (error) {
+        return res.status(500).json({
+            status: 'error',
+            message: error.message,
+            isSuccess: false,
+            data: null
+        });
+    }
+}
+
+async function logout(req, res) {
+    try {
+        res.clearCookie('token', { httpOnly: true, secure: true, sameSite: 'none' });
+        res.clearCookie('refreshToken', { httpOnly: true, secure: true, sameSite: 'none' });
+        res.clearCookie('connect.sid', { httpOnly: true, secure: true, sameSite: 'none' });
+
+        return res.status(200).json({
+            status: 'success',
+            message: 'Logout successful',
+            isSuccess: true,
+            data: null
         });
     } catch (error) {
         return res.status(500).json({
@@ -111,5 +133,6 @@ async function getUserById(req, res) {
 module.exports = {
     login,
     getAllUsers,
-    getUserById
+    getUserById,
+    logout
 };
