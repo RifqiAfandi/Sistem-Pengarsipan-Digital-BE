@@ -28,6 +28,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Arsip',
+    tableName: 'Arsip'
   });
   return Arsip;
 };
